@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Показывает/скрывает плеер.
+/// </summary>
 public class ShowPlayer : MonoBehaviour, IGvrGazeResponder {
 	public float ShowDelay = 1f;
-	private GvrViewer viewer;
 
 	private bool showed;
 	private Material material;
 
 	private void Awake() {
 		material = GetComponent<MeshRenderer>().material;
-		viewer = FindObjectOfType<GvrViewer>();
-		print(viewer);
 	}
 
 	void IGvrGazeResponder.OnGazeEnter() {
@@ -24,17 +24,18 @@ public class ShowPlayer : MonoBehaviour, IGvrGazeResponder {
 	}
 
 	void IGvrGazeResponder.OnGazeTrigger() {
-		print("Trigger");
 	}
 
 	private void Show(bool show) {
 		showed = show;
-//		viewer.VRModeEnabled = !viewer.VRModeEnabled;
 		if (this != null) {
 			StartCoroutine(ShowSlowly(show));
 		}
 	}
 
+	/// <summary>
+	/// Корутина, плавно показывающая/скрывающая изображение.
+	/// </summary>
 	private IEnumerator ShowSlowly(bool show) {
 		var time = ShowDelay;
 
