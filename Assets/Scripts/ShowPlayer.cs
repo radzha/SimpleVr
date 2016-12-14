@@ -3,25 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ShowPlayer : MonoBehaviour, IGvrGazeResponder {
+	public float ShowDelay = 1f;
+	private GvrViewer viewer;
+
+	private bool showed;
+	private Material material;
+
+	private void Awake() {
+		material = GetComponent<MeshRenderer>().material;
+		viewer = FindObjectOfType<GvrViewer>();
+		print(viewer);
+	}
+
 	void IGvrGazeResponder.OnGazeEnter() {
-		print("Enter");
+		Show(true);
 	}
 
 	void IGvrGazeResponder.OnGazeExit() {
-		print("Exit");
+		Show(false);
 	}
 
 	void IGvrGazeResponder.OnGazeTrigger() {
 		print("Trigger");
 	}
 
-	// Use this for initialization
-	void Start () {
-		
+	private void Show(bool show) {
+		showed = show;
+//		viewer.VRModeEnabled = !viewer.VRModeEnabled;
+		if (this != null) {
+			StartCoroutine(ShowSlowly(show));
+		}
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+	private IEnumerator ShowSlowly(bool show) {
+		var time = ShowDelay;
+
+		while (time > 0f && this != null && show == showed) {
+			time -= Time.deltaTime;
+			var color = material.color;
+			color.a = show ? 1 - time / ShowDelay : time / ShowDelay;
+			material.color = color;
+			yield return null;
+		}
 	}
+
 }
